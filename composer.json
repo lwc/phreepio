@@ -1,0 +1,23 @@
+{
+    "name": "lwc/phreepio",
+    "type": "application",
+    "description": "Tool to facilitate translation using 3rd party APIs",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Luke Cawood",
+            "email": "luke.cawood@99designs.com"
+        }
+    ],
+    "require": {
+        "lwc/smartling-php": "dev-master",
+        "symfony/console": "~2.1",
+        "symfony/translation": "~2.2.0",
+        "symfony/twig-bridge": "~2.2.0",
+        "symfony/finder": "~2.2.0"
+    },
+    "autoload": {
+        "psr-0": { "Phreepio": "lib" }
+    },
+    "bin": ["phreepio"]
+}
