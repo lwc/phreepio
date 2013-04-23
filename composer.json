@@ -11,10 +11,7 @@
     ],
     "require": {
         "lwc/smartling-php": "dev-master",
-        "symfony/console": "~2.1",
-        "symfony/translation": "~2.2.0",
-        "symfony/twig-bridge": "~2.2.0",
-        "symfony/finder": "~2.2.0"
+        "symfony/console": "~2.1"
     },
     "autoload": {
         "psr-0": { "Phreepio": "lib" }
