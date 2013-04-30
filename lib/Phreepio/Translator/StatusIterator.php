@@ -36,7 +36,7 @@ class StatusIterator implements \Iterator
                 'success' => false,
                 'errorMessage' => $e->getMessage(),
                 'errorType' => get_class($e),
-                'remotePath' => $remotePath,               
+                'remotePath' => $remotePath,
                 'locale' => $locale,
             );
         }

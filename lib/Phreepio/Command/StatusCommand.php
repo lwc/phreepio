@@ -22,22 +22,27 @@ class StatusCommand extends PhreepioCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln("<info>Fetching</info> translation statuses for <comment>phreepio.json</comment>");
+        $output->writeln("<info>Fetching</info> translation status for files defined in <comment>phreepio.json</comment>");
 
         $translator = $this->getTranslator();
-
+        $errors = array();
         foreach ($translator->getStatusIterator() as $source => $result)
         {
             if ($result->success) {
 
-                $output->writeln('File: <info>'.$result->remotePath.'</info> locale: <info>'.$result->locale.'</info>');
-                $output->writeln($this->getProgress($result->stringCount, $result->approvedStringCount, $result->completedStringCount));
+                $output->writeln($this->getProgress($result->stringCount, $result->approvedStringCount, $result->completedStringCount) . ' <info>'.$result->remotePath.'</info> locale: <info>'.$result->locale.'</info>');
             }
             else {
-                $output->writeln('<error>Failed to fetch status "'.$result->remotePath.'" for locale "'.$result->locale.'"</error>');
-                $output->writeln('<comment>'.$result->errorMessage.'</comment>');
+                $errors[]= $result;
             }
+        }
+
+        if ($errors) {
             $output->writeln('');
+            $output->writeln("<error>There were errors:</error>");
+            foreach ($errors as $error) {
+                $output->writeln('File <comment>'.$error->remotePath.'</comment> Locale <comment>'.$error->locale.'</comment>: <info>'.$error->errorMessage.'</info>');
+            }
         }
     }
 
