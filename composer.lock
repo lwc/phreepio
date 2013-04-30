@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "80a25492b1f747e9afd4f6783318cba3",
+    "hash": "609f0615adc72fe0cf79905ceb3e2856",
     "packages": [
         {
             "name": "guzzle/guzzle",
@@ -99,16 +99,16 @@
         },
         {
             "name": "lwc/smartling-php",
-            "version": "dev-master",
+            "version": "0.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lwc/smartling-php.git",
-                "reference": "06e811a9a54ff82233b2419f0316fd81d83471e7"
+                "reference": "0.0.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lwc/smartling-php/zipball/06e811a9a54ff82233b2419f0316fd81d83471e7",
-                "reference": "06e811a9a54ff82233b2419f0316fd81d83471e7",
+                "url": "https://api.github.com/repos/lwc/smartling-php/zipball/0.0.1",
+                "reference": "0.0.1",
                 "shasum": ""
             },
             "require": {
@@ -248,9 +248,9 @@
 
     ],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "lwc/smartling-php": 20
-    },
+    "stability-flags": [
+
+    ],
     "platform": [
 
     ],
