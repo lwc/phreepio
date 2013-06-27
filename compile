@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php
+
+if (!file_exists(__DIR__.'/vendor/autoload.php'))
+    die("Composer vendor dir not present - run composer install");
+
+$pharFilename = 'phreepio.phar';
+$pharPath = getcwd().'/'.$pharFilename;
+
+$stub = <<<EOF
+#!/usr/bin/env php
+<?php
+Phar::mapPhar('phreepio.phar');
+require_once 'phar://phreepio.phar/vendor/autoload.php';
+use Phreepio\Console\Application;
+\$application = new Application();
+\$application->run();
+__HALT_COMPILER();
+EOF;
+
+
+// delete phar if exists
+if (file_exists($pharPath)) {
+	echo "Removing ".$pharPath."...\n";
+	unlink($pharPath);
+}
+echo "Writing ".$pharPath."...\n";
+
+// Build phar
+$p = new Phar($pharFilename, 0, $pharFilename);
+$p->startBuffering();
+// Add all files in the lib and vendor directory to the phar
+$p->buildFromDirectory(__DIR__, '#/(lib|vendor)/#');
+$p->compressFiles(Phar::GZ);
+$p->setStub($stub);
+$p->stopBuffering();
+
+// make executable
+chmod($pharPath, 0755);
+
