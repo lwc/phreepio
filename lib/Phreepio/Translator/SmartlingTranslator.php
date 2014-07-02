@@ -21,7 +21,7 @@ class SmartlingTranslator implements Adapter
 
     public function download($remotePath, $localPath, $locale)
     {
-        $this->client->get($remotePath, $localPath, $locale);
+        $this->client->get($remotePath, $localPath, $this->normaliseLocale($locale));
     }
 
     public function upload($localPath, $remotePath, $type)
@@ -35,6 +35,17 @@ class SmartlingTranslator implements Adapter
 
     public function status($remotePath, $locale)
     {
-        return (object)$this->client->status($remotePath, $locale);
+        return (object)$this->client->status($remotePath, $this->normaliseLocale($locale));
+    }
+
+    /**
+     * Perform basic normalisation of locale string for usage by Smartling.
+     * Allow local locales to be specified as xx_yy while Smartling expects xx-yy.
+     * @param string $locale
+     * @return string
+     */
+    private function normaliseLocale($locale)
+    {
+        return str_replace('_', '-', $locale);
     }
 }
