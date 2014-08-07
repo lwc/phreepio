@@ -9,4 +9,6 @@ interface Adapter
     public function upload($localPath, $remotePath, $type);
 
     public function status($remotePath, $locale);
+
+    public function enableCache();
 }

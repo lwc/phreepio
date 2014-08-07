@@ -9,14 +9,15 @@ class SmartlingTranslator implements Adapter
     private $client;
     private $autoApprove;
     private $placeholderFormat;
+    private $enableCache;
 
     public function __construct($config)
     {
         $useSandbox = isset($config->useSandbox) ? $config->useSandbox : true;
         $this->placeholderFormat = isset($config->placeholderFormat) ? $config->placeholderFormat : null;
-
         $this->autoApprove = isset($config->autoApprove) ? $config->autoApprove : false ;
         $this->client = new Client($config->apiKey, $config->projectId, $useSandbox);
+        $this->enableCache = isset($config->enableCache) ? $config->enableCache : false;
     }
 
     public function download($remotePath, $localPath, $locale)
@@ -36,6 +37,11 @@ class SmartlingTranslator implements Adapter
     public function status($remotePath, $locale)
     {
         return (object)$this->client->status($remotePath, $this->normaliseLocale($locale));
+    }
+
+    public function enableCache()
+    {
+        return $this->enableCache;
     }
 
     /**
