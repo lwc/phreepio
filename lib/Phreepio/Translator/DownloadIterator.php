@@ -6,14 +6,16 @@ class DownloadIterator implements \Iterator
 {
     private $translator;
     private $remotePaths;
+    private $skeletonPaths;
     private $locales;
     private $destinationPattern;
 
-    public function __construct($translator, $remotePaths, $locales, $destinationPattern)
+    public function __construct($translator, $remotePaths, $skeletonPaths, $locales, $destinationPattern)
     {
         $this->translator = $translator;
         $this->remotePaths = new \ArrayIterator($remotePaths);
         $this->locales = new \ArrayIterator($locales);
+        $this->skeletonPaths = new \ArrayIterator($skeletonPaths);
         $this->destinationPattern = $destinationPattern;
     }
 
@@ -22,8 +24,9 @@ class DownloadIterator implements \Iterator
         $remotePath = $this->remotePaths->current();
         $locale = $this->locales->current();
         $localPath = $this->getLocalPath($remotePath, $locale);
+
         try {
-            $this->translator->download($remotePath, $localPath, $locale);
+            $this->downloadTranslation($remotePath, $localPath, $locale);
         }
         catch (\Exception $e) {
             return (object)array(
@@ -32,7 +35,7 @@ class DownloadIterator implements \Iterator
                 'errorType' => get_class($e),
                 'localPath' => $localPath,
                 'locale' => $locale,
-                'remotePath' => $remotePath                
+                'remotePath' => $remotePath
             );
         }
         return (object)array(
@@ -57,6 +60,7 @@ class DownloadIterator implements \Iterator
         $this->locales->rewind();
 
         $this->remotePaths->next();
+        $this->skeletonPaths->next();
     }
 
     public function rewind()
@@ -64,6 +68,7 @@ class DownloadIterator implements \Iterator
         $this->index = 0;
         $this->locales->rewind();
         $this->remotePaths->rewind();
+        $this->skeletonPaths->rewind();
     }
 
     public function valid()
@@ -83,6 +88,59 @@ class DownloadIterator implements \Iterator
             array_keys($targetParts),
             array_values($targetParts),
             $this->destinationPattern
+        );
+    }
+
+    /**
+     * Download translations if cache doesn't exist
+     * @param  string $remotePath   Remote path to translation
+     * @param  string $localPath    Path to local translation
+     * @param  string $locale       translation locale
+     * @return null
+     */
+    private function downloadTranslation($remotePath, $localPath, $locale) {
+        $skeletonPath = $this->skeletonPaths->current();
+
+        if ($this->translator->enableCache() && file_exists($skeletonPath)) {
+            $cachePath = $this->getCachePath($skeletonPath, $localPath);
+
+            if (!file_exists($cachePath)) {
+                $this->makeCacheDir($cachePath);
+
+                $this->translator->download($remotePath, $cachePath, $locale);
+            }
+
+            copy($cachePath, $localPath);
+        }
+
+        $this->translator->download($remotePath, $localPath, $locale);
+    }
+
+    private function makeCacheDir($cachePath)
+    {
+        $cacheDir = dirname($cachePath);
+        if (!file_exists($cacheDir)) {
+            mkdir($cacheDir, 0777, true);
+        }
+    }
+
+    /**
+     * Get the cache path of the translation file
+     * @param  string $skeletonPath Smartling's skeleton file path
+     * @param  string $localPath    Local translation file path
+     * @return string               Path to the cached translation
+     */
+    private function getCachePath($skeletonPath, $localPath)
+    {
+        $pathInfo = pathInfo($localPath);
+        $hash = md5_file($skeletonPath);
+
+        return sprintf(
+            "%s/.cache/%s.%s/%s",
+            $pathInfo['dirname'],
+            pathinfo($skeletonPath, PATHINFO_FILENAME),
+            $hash,
+            $pathInfo['basename']
         );
     }
 }

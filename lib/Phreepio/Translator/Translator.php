@@ -20,15 +20,18 @@ class Translator
 
     public function getDownloadIterator()
     {
+        $skeletonPaths = array();
         $remotePaths = array();
-        foreach ($this->config->sources as $source) {
+
+        foreach ($this->config->sources as $skeletonPath => $source) {
             $remotePaths[] = $source->target;
+            $skeletonPaths[] = $skeletonPath;
         }
 
         $locales = $this->config->target->locales;
         $destinationPattern = $this->config->target->destination;
 
-        return new DownloadIterator($this->adapter, $remotePaths, $locales, $destinationPattern);
+        return new DownloadIterator($this->adapter, $remotePaths, $skeletonPaths, $locales, $destinationPattern);
     }
 
     public function getStatusIterator()
@@ -39,6 +42,6 @@ class Translator
         }
 
         $locales = $this->config->target->locales;
-        return new StatusIterator($this->adapter, $remotePaths, $locales);        
+        return new StatusIterator($this->adapter, $remotePaths, $locales);
     }
 }
