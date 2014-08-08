@@ -111,9 +111,9 @@ class DownloadIterator implements \Iterator
             }
 
             copy($cachePath, $localPath);
+        } else {
+            $this->translator->download($remotePath, $localPath, $locale);
         }
-
-        $this->translator->download($remotePath, $localPath, $locale);
     }
 
     private function makeCacheDir($cachePath)
