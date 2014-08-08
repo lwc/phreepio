@@ -1,22 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
     ],
-    "hash": "609f0615adc72fe0cf79905ceb3e2856",
+    "hash": "52a5d39f069a0bcb159a8aac3f1f5303",
     "packages": [
         {
             "name": "guzzle/guzzle",
             "version": "v3.1.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/guzzle/guzzle",
-                "reference": "v3.1.2"
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "7901ea7d27373d0cc85eac6f6694e4c2ced90a26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/guzzle/guzzle/archive/v3.1.2.zip",
-                "reference": "v3.1.2",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/7901ea7d27373d0cc85eac6f6694e4c2ced90a26",
+                "reference": "7901ea7d27373d0cc85eac6f6694e4c2ced90a26",
                 "shasum": ""
             },
             "require": {
@@ -103,16 +104,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/lwc/smartling-php.git",
-                "reference": "0.0.1"
+                "reference": "06e811a9a54ff82233b2419f0316fd81d83471e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lwc/smartling-php/zipball/0.0.1",
-                "reference": "0.0.1",
+                "url": "https://api.github.com/repos/lwc/smartling-php/zipball/06e811a9a54ff82233b2419f0316fd81d83471e7",
+                "reference": "06e811a9a54ff82233b2419f0316fd81d83471e7",
                 "shasum": ""
             },
             "require": {
-                "guzzle/guzzle": ">=3.1.1,<3.2"
+                "guzzle/guzzle": "~3.1.1"
             },
             "type": "library",
             "autoload": {
@@ -146,12 +147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "v2.2.1"
+                "reference": "d146fc32a9cf13bc479820e515048298a34cd432"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/v2.2.1",
-                "reference": "v2.2.1",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/d146fc32a9cf13bc479820e515048298a34cd432",
+                "reference": "d146fc32a9cf13bc479820e515048298a34cd432",
                 "shasum": ""
             },
             "require": {
@@ -175,7 +176,9 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
                 },
                 {
                     "name": "Symfony Community",
@@ -193,19 +196,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "v2.2.1"
+                "reference": "45c43ffa186a0473c71a947981e43e025cd93c87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.2.1",
-                "reference": "v2.2.1",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/45c43ffa186a0473c71a947981e43e025cd93c87",
+                "reference": "45c43ffa186a0473c71a947981e43e025cd93c87",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "symfony/dependency-injection": ">=2.0,<3.0"
+                "symfony/dependency-injection": "~2.0"
             },
             "suggest": {
                 "symfony/dependency-injection": "2.2.*",
@@ -229,7 +232,9 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
                 },
                 {
                     "name": "Symfony Community",
@@ -241,20 +246,11 @@
             "time": "2013-02-11 11:26:43"
         }
     ],
-    "packages-dev": [
-
-    ],
-    "aliases": [
-
-    ],
+    "packages-dev": [],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [
-
-    ],
-    "platform": [
-
-    ],
-    "platform-dev": [
-
-    ]
+    "stability-flags": [],
+    "prefer-stable": false,
+    "platform": [],
+    "platform-dev": []
 }
