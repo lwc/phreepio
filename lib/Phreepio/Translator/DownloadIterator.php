@@ -25,25 +25,30 @@ class DownloadIterator implements \Iterator
         $locale = $this->locales->current();
         $localPath = $this->getLocalPath($remotePath, $locale);
 
-        try {
-            $this->downloadTranslation($remotePath, $localPath, $locale);
+        $skeletonPath = $this->skeletonPaths->current();
+
+        if ($this->translator->enableCache() && file_exists($skeletonPath)) {
+            $cachePath = $this->getCachePath($skeletonPath, $localPath);
+
+            if (!file_exists($cachePath)) {
+                $this->makeCacheDir($cachePath);
+                $result = $this->downloadTranslation($remotePath, $cachePath, $locale);
+            } else {
+                $result = (object)array(
+                    'success' => true,
+                    'usedCache' => true,
+                    'localPath' => $localPath,
+                    'locale' => $locale,
+                    'remotePath' => $remotePath
+                );
+            }
+
+            copy($cachePath, $localPath);
+
+            return $result;
+        } else {
+            return $this->downloadTranslation($remotePath, $localPath, $locale);
         }
-        catch (\Exception $e) {
-            return (object)array(
-                'success' => false,
-                'errorMessage' => $e->getMessage(),
-                'errorType' => get_class($e),
-                'localPath' => $localPath,
-                'locale' => $locale,
-                'remotePath' => $remotePath
-            );
-        }
-        return (object)array(
-            'success' => true,
-            'localPath' => $localPath,
-            'locale' => $locale,
-            'remotePath' => $remotePath
-        );
     }
 
     public function key()
@@ -91,29 +96,27 @@ class DownloadIterator implements \Iterator
         );
     }
 
-    /**
-     * Download translations if cache doesn't exist
-     * @param  string $remotePath   Remote path to translation
-     * @param  string $localPath    Path to local translation
-     * @param  string $locale       translation locale
-     * @return null
-     */
     private function downloadTranslation($remotePath, $localPath, $locale) {
-        $skeletonPath = $this->skeletonPaths->current();
-
-        if ($this->translator->enableCache() && file_exists($skeletonPath)) {
-            $cachePath = $this->getCachePath($skeletonPath, $localPath);
-
-            if (!file_exists($cachePath)) {
-                $this->makeCacheDir($cachePath);
-
-                $this->translator->download($remotePath, $cachePath, $locale);
-            }
-
-            copy($cachePath, $localPath);
-        } else {
+        try {
             $this->translator->download($remotePath, $localPath, $locale);
         }
+        catch (\Exception $e) {
+            return (object)array(
+                'success' => false,
+                'errorMessage' => $e->getMessage(),
+                'errorType' => get_class($e),
+                'localPath' => $localPath,
+                'locale' => $locale,
+                'remotePath' => $remotePath
+            );
+        }
+        return (object)array(
+            'success' => true,
+            'usedCache' => false,
+            'localPath' => $localPath,
+            'locale' => $locale,
+            'remotePath' => $remotePath
+        );
     }
 
     private function makeCacheDir($cachePath)
