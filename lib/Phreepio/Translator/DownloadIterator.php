@@ -139,10 +139,11 @@ class DownloadIterator implements \Iterator
         $hash = md5_file($skeletonPath);
 
         return sprintf(
-            "%s/.cache/%s.%s/%s",
+            "%s/.cache/%s.%s.%s/%s",
             $pathInfo['dirname'],
             pathinfo($skeletonPath, PATHINFO_FILENAME),
             $hash,
+            $this->translator->cacheVersion(),
             $pathInfo['basename']
         );
     }

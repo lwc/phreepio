@@ -11,4 +11,6 @@ interface Adapter
     public function status($remotePath, $locale);
 
     public function enableCache();
+
+    public function cacheVersion();
 }
