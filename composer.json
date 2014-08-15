@@ -1,7 +1,7 @@
 {
     "name": "lwc/phreepio",
     "type": "application",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Tool to facilitate translation using 3rd party APIs",
     "keywords": ["cli", "translation", "i18n"],
     "license": "MIT",
