@@ -29,8 +29,7 @@ class DownloadIterator implements \Iterator
 
         if ($this->translator->enableCache() && file_exists($skeletonPath)) {
             $cachePath = $this->getCachePath($skeletonPath, $localPath);
-
-            if (!file_exists($cachePath)) {
+            if (!file_exists($cachePath) || $this->hasCacheExpired($cachePath)) {
                 $this->makeCacheDir($cachePath);
                 $result = $this->downloadTranslation($remotePath, $cachePath, $locale);
             } else {
@@ -146,5 +145,15 @@ class DownloadIterator implements \Iterator
             $this->translator->cacheVersion(),
             $pathInfo['basename']
         );
+    }
+
+    /**
+     * Checks the file path against the specified cache age
+     * @param  string  $filepath translation
+     * @return boolean
+     */
+    private function hasCacheExpired($filepath)
+    {
+        return (filemtime($filepath) + $this->translator->cacheMaxAge()) < time();
     }
 }

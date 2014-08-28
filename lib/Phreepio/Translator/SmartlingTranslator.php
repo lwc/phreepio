@@ -11,6 +11,7 @@ class SmartlingTranslator implements Adapter
     private $placeholderFormat;
     private $enableCache;
     private $cacheVersion;
+    private $cacheMaxAge;
 
     public function __construct($config)
     {
@@ -20,6 +21,7 @@ class SmartlingTranslator implements Adapter
         $this->client = new Client($config->apiKey, $config->projectId, $useSandbox);
         $this->enableCache = isset($config->enableCache) ? $config->enableCache : false;
         $this->cacheVersion = isset($config->cacheVersion) ? $config->cacheVersion : "v1.0";
+        $this->cacheMaxAge = isset($config->cacheMaxAge) ? $config->cacheMaxAge : 3600; // Default to 1 hour
     }
 
     public function download($remotePath, $localPath, $locale)
@@ -49,6 +51,11 @@ class SmartlingTranslator implements Adapter
     public function cacheVersion()
     {
         return $this->cacheVersion;
+    }
+
+    public function cacheMaxAge()
+    {
+        return $this->cacheMaxAge;
     }
 
     /**

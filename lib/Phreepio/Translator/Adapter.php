@@ -13,4 +13,6 @@ interface Adapter
     public function enableCache();
 
     public function cacheVersion();
+
+    public function cacheMaxAge();
 }
