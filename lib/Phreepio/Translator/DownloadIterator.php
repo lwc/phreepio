@@ -97,7 +97,8 @@ class DownloadIterator implements \Iterator
 
     private function downloadTranslation($remotePath, $localPath, $locale) {
         try {
-            $this->translator->download($remotePath, $localPath, $locale);
+            $tmpPath = $this->getTmpPath($localPath);
+            $this->translator->download($remotePath, $tmpPath, $locale);
         }
         catch (\Exception $e) {
             return (object)array(
@@ -109,6 +110,9 @@ class DownloadIterator implements \Iterator
                 'remotePath' => $remotePath
             );
         }
+
+        rename($tmpPath, $localPath);
+
         return (object)array(
             'success' => true,
             'usedCache' => false,
@@ -155,5 +159,22 @@ class DownloadIterator implements \Iterator
     private function hasCacheExpired($filepath)
     {
         return (filemtime($filepath) + $this->translator->cacheMaxAge()) < time();
+    }
+
+    /**
+     * Get the temporary path for downloading.
+     * After download is complete the temp path will get rename to the permanent path.
+     * @param  string $filePath
+     * @return string
+     */
+    private function getTmpPath($filePath)
+    {
+        $filename = pathinfo($filePath, PATHINFO_FILENAME);
+
+        return str_replace(
+            $filename,
+            'tmp-' . $filename,
+            $filePath
+        );
     }
 }
