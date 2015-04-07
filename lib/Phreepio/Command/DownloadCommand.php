@@ -27,12 +27,8 @@ class DownloadCommand extends PhreepioCommand
         foreach ($translator->getDownloadIterator() as $i => $result)
         {
             if ($result->success) {
-                if ($result->usedCache) {
-                    $output->writeln('Found cache: <comment>'.$result->remotePath.'</comment> for locale <comment>'.$result->locale.'</comment>');
-                } else {
-                    $output->writeln('<info>Succeeded</info> to download <comment>'.$result->remotePath.'</comment> for locale <comment>'.$result->locale.'</comment>');
-                }
 
+                $output->writeln('<info>Succeeded</info> to download <comment>'.$result->remotePath.'</comment> for locale <comment>'.$result->locale.'</comment>');
                 $output->writeln('Translation saved in <comment>'.$result->localPath.'</comment>');
             }
             else {
