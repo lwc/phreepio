@@ -9,7 +9,7 @@ class DownloadIterator implements \Iterator
     private $locales;
     private $destinationPattern;
 
-    public function __construct($translator, $remotePaths, $locales, $destinationPattern)
+    public function __construct(Adapter $translator, $remotePaths, $locales, $destinationPattern)
     {
         $this->translator = $translator;
         $this->remotePaths = new \ArrayIterator($remotePaths);
@@ -22,24 +22,25 @@ class DownloadIterator implements \Iterator
         $remotePath = $this->remotePaths->current();
         $locale = $this->locales->current();
         $localPath = $this->getLocalPath($remotePath, $locale);
-        try {
-            $this->translator->download($remotePath, $localPath, $locale);
-        }
-        catch (\Exception $e) {
-            return (object)array(
-                'success' => false,
-                'errorMessage' => $e->getMessage(),
-                'errorType' => get_class($e),
-                'localPath' => $localPath,
-                'locale' => $locale,
-                'remotePath' => $remotePath                
-            );
-        }
-        return (object)array(
-            'success' => true,
-            'localPath' => $localPath,
-            'locale' => $locale,
-            'remotePath' => $remotePath
+
+        return $this->translator->download($remotePath, $localPath, $locale)->then(
+            function() use ($locale, $localPath, $remotePath) {
+                return (object)[
+                    'success' => true,
+                    'localPath' => $localPath,
+                    'locale' => $locale,
+                    'remotePath' => $remotePath
+                ];
+            },
+            function($message) use ($locale, $localPath, $remotePath) {
+                return (object)[
+                    'success' => false,
+                    'errorMessage' => $message,
+                    'localPath' => $localPath,
+                    'locale' => $locale,
+                    'remotePath' => $remotePath
+                ];
+            }
         );
     }
 

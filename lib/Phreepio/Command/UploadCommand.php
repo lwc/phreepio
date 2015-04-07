@@ -25,22 +25,25 @@ class UploadCommand extends PhreepioCommand
 
         $translator = $this->getTranslator();
 
-        foreach ($translator->getUploadIterator() as $source => $result)
+        foreach ($translator->getUploadIterator() as $source => $resultPromise)
         {
-            if ($result->success) {
+            $resultPromise->then(function($result) use ($output, $source) {
+                if ($result->success) {
 
-                $verb = "Added";
-                if ($result->overWritten) {
-                    $verb = "<comment>Overwrote remote</comment>";
+                    $verb = "Added";
+                    if ($result->overWritten) {
+                        $verb = "<comment>Overwrote remote</comment>";
+                    }
+                    $output->writeln("$verb: <info>$source</info>");
+                    $output->writeln("String Count: <info>{$result->stringCount}</info>");
+                } else {
+                    $output->writeln('<error>Failed to upload "' . $source . '"</error>');
+                    $output->writeln('<comment>' . $result->errorMessage . '</comment>');
                 }
-                $output->writeln("$verb: <info>$source</info>");
-                $output->writeln("String Count: <info>{$result->stringCount}</info>");
-            }
-            else {
-                $output->writeln('<error>Failed to upload "'.$source.'"</error>');
-                $output->writeln('<comment>'.$result->errorMessage.'</comment>');
-            }
-            $output->writeln('');
+                $output->writeln('');
+            });
         }
+
+        $translator->flush();
     }
 }

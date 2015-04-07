@@ -2,7 +2,7 @@
 
 namespace Phreepio\Translator;
 
-use Smartling\Client;
+use Phreepio\Smartling\Client;
 
 class SmartlingTranslator implements Adapter
 {
@@ -21,7 +21,7 @@ class SmartlingTranslator implements Adapter
 
     public function download($remotePath, $localPath, $locale)
     {
-        $this->client->get($remotePath, $localPath, $this->normaliseLocale($locale));
+        return $this->client->get($remotePath, $localPath, $this->normaliseLocale($locale));
     }
 
     public function upload($localPath, $remotePath, $type)
@@ -30,12 +30,12 @@ class SmartlingTranslator implements Adapter
         if ($this->placeholderFormat) {
             $options['placeholder_format_custom'] = $this->placeholderFormat;
         }
-        return (object)$this->client->upload($localPath, $remotePath, $type, $this->autoApprove, $options);
+        return $this->client->upload($localPath, $remotePath, $type, $this->autoApprove, $options);
     }
 
     public function status($remotePath, $locale)
     {
-        return (object)$this->client->status($remotePath, $this->normaliseLocale($locale));
+        return $this->client->status($remotePath, $this->normaliseLocale($locale));
     }
 
     /**
@@ -47,5 +47,10 @@ class SmartlingTranslator implements Adapter
     private function normaliseLocale($locale)
     {
         return str_replace('_', '-', $locale);
+    }
+
+    public function flush()
+    {
+        $this->client->sendAll();
     }
 }
