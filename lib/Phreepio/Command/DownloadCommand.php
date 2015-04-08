@@ -24,22 +24,22 @@ class DownloadCommand extends PhreepioCommand
 
         $translator = $this->getTranslator();
 
-        foreach ($translator->getDownloadIterator() as $i => $result)
+        foreach ($translator->getDownloadIterator() as $i => $resultPromise)
         {
-            if ($result->success) {
-                if ($result->usedCache) {
-                    $output->writeln('Found cache: <comment>'.$result->remotePath.'</comment> for locale <comment>'.$result->locale.'</comment>');
-                } else {
-                    $output->writeln('<info>Succeeded</info> to download <comment>'.$result->remotePath.'</comment> for locale <comment>'.$result->locale.'</comment>');
-                }
+            $resultPromise->then(function($result) use ($output) {
+                if ($result->success) {
 
-                $output->writeln('Translation saved in <comment>'.$result->localPath.'</comment>');
-            }
-            else {
-                $output->writeln('<error>Failed to download "'.$result->remotePath.'" for locale "'.$result->locale.'"</error>');
-                $output->writeln('<comment>'.$result->errorMessage.'</comment>');
-            }
-            $output->writeln('');
+                    $output->writeln('<info>Succeeded</info> to download <comment>'.$result->remotePath.'</comment> for locale <comment>'.$result->locale.'</comment>');
+                    $output->writeln('Translation saved in <comment>'.$result->localPath.'</comment>');
+                }
+                else {
+                    $output->writeln('<error>Failed to download "'.$result->remotePath.'" for locale "'.$result->locale.'"</error>');
+                    $output->writeln('<comment>'.$result->errorMessage.'</comment>');
+                }
+                $output->writeln('');
+            });
         }
+
+        $this->getTranslator()->flush();
     }
 }

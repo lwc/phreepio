@@ -26,15 +26,16 @@ class StatusCommand extends PhreepioCommand
 
         $translator = $this->getTranslator();
         $errors = array();
-        foreach ($translator->getStatusIterator() as $source => $result)
+        foreach ($translator->getStatusIterator() as $source => $resultPromise)
         {
-            if ($result->success) {
+            $resultPromise->then(function($result) use ($output, &$errors) {
+                if ($result->success) {
 
-                $output->writeln($this->getProgress($result->stringCount, $result->approvedStringCount, $result->completedStringCount) . ' <info>'.$result->remotePath.'</info> locale: <info>'.$result->locale.'</info>');
-            }
-            else {
-                $errors[]= $result;
-            }
+                    $output->writeln($this->getProgress($result->stringCount, $result->approvedStringCount, $result->completedStringCount) . ' <info>' . $result->remotePath . '</info> locale: <info>' . $result->locale . '</info>');
+                } else {
+                    $errors[] = $result;
+                }
+            });
         }
 
         if ($errors) {
@@ -44,6 +45,8 @@ class StatusCommand extends PhreepioCommand
                 $output->writeln('File <comment>'.$error->remotePath.'</comment> Locale <comment>'.$error->locale.'</comment>: <info>'.$error->errorMessage.'</info>');
             }
         }
+
+        $this->getTranslator()->flush();
     }
 
     private function getProgress($total, $approved, $translated)

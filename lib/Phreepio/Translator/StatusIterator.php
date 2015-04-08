@@ -8,7 +8,7 @@ class StatusIterator implements \Iterator
     private $remotePaths;
     private $locales;
 
-    public function __construct($translator, $remotePaths, $locales)
+    public function __construct(Adapter $translator, $remotePaths, $locales)
     {
         $this->translator = $translator;
         $this->remotePaths = new \ArrayIterator($remotePaths);
@@ -20,26 +20,27 @@ class StatusIterator implements \Iterator
         $remotePath = $this->remotePaths->current();
         $locale = $this->locales->current();
 
-        try {
-            $result = $this->translator->status($remotePath, $locale);
-            return (object)array(
-                'success' => true,
-                'remotePath' => $remotePath,
-                'locale' => $locale,
-                'stringCount' => $result->stringCount,
-                'approvedStringCount' => $result->approvedStringCount,
-                'completedStringCount' => $result->completedStringCount,
-            );            
-        }
-        catch (\Exception $e) {
-            return (object)array(
-                'success' => false,
-                'errorMessage' => $e->getMessage(),
-                'errorType' => get_class($e),
-                'remotePath' => $remotePath,
-                'locale' => $locale,
-            );
-        }
+
+        return $this->translator->status($remotePath, $locale)->then(
+            function($result) use ($remotePath, $locale) {
+                return (object)array(
+                    'success' => true,
+                    'remotePath' => $remotePath,
+                    'locale' => $locale,
+                    'stringCount' => $result['stringCount'],
+                    'approvedStringCount' => $result['approvedStringCount'],
+                    'completedStringCount' => $result['completedStringCount'],
+                );
+            },
+            function($error) use ($remotePath, $locale) {
+                return (object)array(
+                    'success' => false,
+                    'errorMessage' => $error,
+                    'remotePath' => $remotePath,
+                    'locale' => $locale,
+                );
+            }
+        );
     }
 
     public function key()

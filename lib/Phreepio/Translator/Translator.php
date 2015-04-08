@@ -2,6 +2,8 @@
 
 namespace Phreepio\Translator;
 
+use React\Promise\PromiseInterface;
+
 class Translator
 {
     private $adapter;
@@ -13,27 +15,33 @@ class Translator
         $this->config = $config;
     }
 
+    /**
+     * @return UploadIterator|PromiseInterface[]
+     */
     public function getUploadIterator()
     {
         return new UploadIterator($this->adapter, $this->config->sources);
     }
 
+    /**
+     * @return DownloadIterator|PromiseInterface[]
+     */
     public function getDownloadIterator()
     {
-        $skeletonPaths = array();
         $remotePaths = array();
-
-        foreach ($this->config->sources as $skeletonPath => $source) {
+        foreach ($this->config->sources as $source) {
             $remotePaths[] = $source->target;
-            $skeletonPaths[] = $skeletonPath;
         }
 
         $locales = $this->config->target->locales;
         $destinationPattern = $this->config->target->destination;
 
-        return new DownloadIterator($this->adapter, $remotePaths, $skeletonPaths, $locales, $destinationPattern);
+        return new DownloadIterator($this->adapter, $remotePaths, $locales, $destinationPattern);
     }
 
+    /**
+     * @return StatusIterator|PromiseInterface[]
+     */
     public function getStatusIterator()
     {
         $remotePaths = array();
@@ -42,6 +50,11 @@ class Translator
         }
 
         $locales = $this->config->target->locales;
-        return new StatusIterator($this->adapter, $remotePaths, $locales);
+        return new StatusIterator($this->adapter, $remotePaths, $locales);        
+    }
+
+    public function flush()
+    {
+        $this->adapter->flush();
     }
 }

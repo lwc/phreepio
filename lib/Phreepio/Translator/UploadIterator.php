@@ -7,7 +7,7 @@ class UploadIterator implements \Iterator
     private $translator;
     private $sources;
 
-    public function __construct($translator, $sources)
+    public function __construct(Adapter $translator, $sources)
     {
         $this->translator = $translator;
         $this->sources = new \ArrayIterator($sources);
@@ -18,23 +18,25 @@ class UploadIterator implements \Iterator
         $source = $this->sources->key();
         $config = $this->sources->current();
 
-        try {
-            $result = $this->translator->upload($source, $config->target, $config->type);
-            return (object)array(
-                'success' => true,
-                'remotePath' => $config->target,
-                'overWritten' => $result->overWritten,
-                'stringCount' => $result->stringCount,
-            );            
-        }
-        catch (\Exception $e) {
-            return (object)array(
-                'success' => false,
-                'errorMessage' => $e->getMessage(),
-                'errorType' => get_class($e),
-                'remotePath' => $config->target,               
-            );
-        }        
+
+        return $this->translator->upload($source, $config->target, $config->type)->then(
+            function ($result) use ($config) {
+                return (object)array(
+                    'success' => true,
+                    'remotePath' => $config->target,
+                    'overWritten' => $result['overWritten'],
+                    'stringCount' => $result['stringCount'],
+                );
+            },
+
+            function ($error) use ($config) {
+                return (object)array(
+                    'success' => false,
+                    'errorMessage' => $error,
+                    'remotePath' => $config->target,
+                );
+            }
+        );
     }
 
     public function key()

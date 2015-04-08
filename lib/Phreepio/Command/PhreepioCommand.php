@@ -14,6 +14,7 @@ use Phreepio\Configuration;
 class PhreepioCommand extends Command
 {
     private $phreepioConfig;
+    private $translator;
 
     protected function getPhreepioConfig()
     {
@@ -29,6 +30,10 @@ class PhreepioCommand extends Command
 
     protected function getTranslator()
     {
-        return $this->getPhreepioConfig()->getTranslator();
+        if (!$this->translator) {
+            $this->translator = $this->getPhreepioConfig()->getTranslator();
+        }
+
+        return $this->translator;
     }
 }
