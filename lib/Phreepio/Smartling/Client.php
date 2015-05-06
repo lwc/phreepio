@@ -169,7 +169,8 @@ class Client
         });
 
         $request->getEmitter()->on('error', function(ErrorEvent $e) use ($deferred) {
-            $deferred->reject($e->getException()->getMessage() . "\nBody: " . $e->getResponse()->getBody()->getContents());
+            $response = $e->getResponse() ? $e->getResponse()->getBody()->getContents() : 'No response body';
+            $deferred->reject($e->getException()->getMessage() . "\nBody: " . $response);
         });
 
         return $deferred->promise();
